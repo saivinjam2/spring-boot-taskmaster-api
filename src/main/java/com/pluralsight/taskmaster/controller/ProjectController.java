@@ -48,7 +48,17 @@ public class ProjectController {
             Project updatedProject = project.get();
             updatedProject.setName(projectDetails.getName());
             updatedProject.setDescription(projectDetails.getDescription());
-            updatedProject.setTasks(projectDetails.getTasks());
+
+            //Clear the current tasks to ensure fresh association
+            if(updatedProject.getTasks() != null && !updatedProject.getTasks().isEmpty()){
+                updatedProject.getTasks().clear();
+            }
+            //Re-Add tasks, ensuring that each task is associated with
+            for(Task task: projectDetails.getTasks()){
+                task.setProject(updatedProject);
+                updatedProject.addTask(task);
+            }
+
             return ResponseEntity.ok(projectService.saveProject(updatedProject));
         } else {
             return ResponseEntity.notFound().build();

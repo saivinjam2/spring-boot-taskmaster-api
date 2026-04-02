@@ -1,9 +1,11 @@
 package com.pluralsight.taskmaster.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,11 +20,13 @@ public class Project {
     private String description;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks;
+    @JsonManagedReference
+    private List<Task> tasks = new ArrayList<>();
 
     public void addTask(Task task){
         tasks.add(task);
-        task.setProject(null);
+        //check back here (null or this?)
+        task.setProject(this);
     }
 
     public void removeTask(Task task){
